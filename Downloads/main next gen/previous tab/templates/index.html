@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Thread Categorizer</title>
+    <script>
+        function categorizeThreads() {
+            const emails = [
+                document.getElementById('email1').value,
+                document.getElementById('email2').value,
+                document.getElementById('email3').value,
+                document.getElementById('email4').value
+            ];
+
+            fetch('/categorize_threads', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `emails=${encodeURIComponent(JSON.stringify(emails))}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                let output = '';
+                for (const [title, summary] of Object.entries(data)) {
+                    output += `<h3>${title}</h3><p>${summary}</p>`;
+                }
+                document.getElementById('threadsOutput').innerHTML = output;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Email Thread Categorizer</h1>
+    <textarea id="email1" rows="5" cols="50" placeholder="Enter email 1 here"></textarea><br>
+    <textarea id="email2" rows="5" cols="50" placeholder="Enter email 2 here"></textarea><br>
+    <textarea id="email3" rows="5" cols="50" placeholder="Enter email 3 here"></textarea><br>
+    <textarea id="email4" rows="5" cols="50" placeholder="Enter email 4 here"></textarea><br>
+    <button onclick="categorizeThreads()">Categorize Threads</button>
+    <h2>Thread Summaries:</h2>
+    <div id="threadsOutput"></div>
+</body>
+</html>

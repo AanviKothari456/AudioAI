@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Summary</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Latest Email Summary</h1>
+        <div id="email-summary" class="mt-4 p-4 border rounded bg-light">
+            <p><strong>Sender:</strong> <span id="sender-email">Loading...</span></p>
+            <p><strong>Summary:</strong> <span id="email-summary-text">Loading...</span></p>
+        </div>
+        <div class="text-center mt-4">
+            <button id="send-button" class="btn btn-primary">Send Summary</button>
+        </div>
+    </div>
+
+    <script>
+        // Fetch the email summary using an API call to the Flask app
+        async function getEmailSummary() {
+            try {
+                const response = await fetch('/api/get-latest-email');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('sender-email').textContent = data.sender;
+                    document.getElementById('email-summary-text').textContent = data.summary;
+                } else {
+                    document.getElementById('sender-email').textContent = "Unable to load sender email.";
+                    document.getElementById('email-summary-text').textContent = "Unable to load summary.";
+                }
+            } catch (error) {
+                console.error('Error fetching email summary:', error);
+                document.getElementById('sender-email').textContent = "Error loading sender email.";
+                document.getElementById('email-summary-text').textContent = "Error loading summary.";
+            }
+        }
+
+        // Handle send button click
+        async function sendSummary() {
+            try {
+                const response = await fetch('/api/send-summary', {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    alert('Summary sent successfully!');
+                } else {
+                    alert('Failed to send summary.');
+                }
+            } catch (error) {
+                console.error('Error sending summary:', error);
+                alert('An error occurred while sending summary.');
+            }
+        }
+
+        // Add event listener to the send button
+        document.getElementById('send-button').addEventListener('click', sendSummary);
+
+        // Load the email summary on page load
+        document.addEventListener('DOMContentLoaded', getEmailSummary);
+    </script>
+</body>
+</html>

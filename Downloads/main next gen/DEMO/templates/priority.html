@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priority</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            padding: 20px;
+        }
+        .email-item {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .email-item:hover {
+            transform: translateY(-5px);
+        }
+        .email-title {
+            font-weight: bold;
+            color: #ff5722;
+            margin-bottom: 5px;
+        }
+        .email-summary {
+            color: #555;
+        }
+        .toggle-button, .sort-dropdown {
+            margin-bottom: 20px;
+        }
+        #savedForLaterList {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Priority Emails</h1>
+        <div class="toggle-button text-center">
+            <button id="toggleUnread" class="btn btn-primary" onclick="toggleUnread()">Show Unread Only</button>
+        </div>
+        <div class="sort-dropdown text-center">
+            <select id="sortOptions" class="form-control w-50 mx-auto" onchange="sortEmails()">
+                <option value="time">Sort by Time</option>
+                <option value="urgency">Sort by Urgency</option>
+                <option value="latest">Latest to Oldest</option>
+                <option value="oldest">Oldest to Latest</option>
+            </select>
+        </div>
+        <div id="savedForLaterButton" class="text-center" style="display: none;">
+            <button id="showSavedForLater" class="btn btn-warning" onclick="toggleSavedForLater()">Show Saved for Later</button>
+        </div>
+        <div id="emailList">
+            <div class="email-item unread" id="email-1">
+                <div class="email-title">Client Inquiry</div>
+                <div class="email-summary">Inquiry about the current steel prices from JSPL. 
+                    <button class="btn btn-sm btn-success" onclick="markAsRead('email-1')">Mark as Read</button>
+                    <button class="btn btn-sm btn-info" onclick="saveForLater('email-1')">Later</button>
+                </div>
+            </div>
+            <div class="email-item unread" id="email-2">
+                <div class="email-title">Invoice Update</div>
+                <div class="email-summary">Invoice sent to Tata for the last delivery. 
+                    <button class="btn btn-sm btn-success" onclick="markAsRead('email-2')">Mark as Read</button>
+                    <button class="btn btn-sm btn-info" onclick="saveForLater('email-2')">Later</button>
+                </div>
+            </div>
+            <div class="email-item unread" id="email-3">
+                <div class="email-title">Project Meeting</div>
+                <div class="email-summary">Team meeting scheduled for tomorrow at 10 AM. 
+                    <button class="btn btn-sm btn-success" onclick="markAsRead('email-3')">Mark as Read</button>
+                    <button class="btn btn-sm btn-info" onclick="saveForLater('email-3')">Later</button>
+                </div>
+            </div>
+            <div class="email-item read" id="email-4">
+                <div class="email-title">Health Newsletter</div>
+                <div class="email-summary">5 tips for a healthier lifestyle this week.</div>
+            </div>
+            <div class="email-item unread" id="email-5">
+                <div class="email-title">Tech Weekly</div>
+                <div class="email-summary">Latest trends in AI and tech - don't miss out! 
+                    <button class="btn btn-sm btn-success" onclick="markAsRead('email-5')">Mark as Read</button>
+                    <button class="btn btn-sm btn-info" onclick="saveForLater('email-5')">Later</button>
+                </div>
+            </div>
+            <div class="email-item read" id="email-6">
+                <div class="email-title">Nike Sale</div>
+                <div class="email-summary">Exclusive sale: Get up to 30% off selected items!</div>
+            </div>
+        </div>
+        <div id="savedForLaterList" class="text-center">
+            <h2>Saved for Later</h2>
+            <div id="savedEmails"></div>
+        </div>
+        <div class="text-center mt-4">
+            <p id="statusSummary">6 of 15 emails are unread.</p>
+        </div>
+    </div>
+
+    <script>
+        function markAsRead(emailId) {
+            const emailElement = document.getElementById(emailId);
+            emailElement.classList.remove('unread');
+            emailElement.classList.add('read');
+            emailElement.style.display = 'none';
+            updateStatusSummary();
+        }
+
+        function saveForLater(emailId) {
+            const emailElement = document.getElementById(emailId);
+            const savedForLaterList = document.getElementById('savedEmails');
+            const savedButtonContainer = document.getElementById('savedForLaterButton');
+            const clone = emailElement.cloneNode(true);
+            clone.id = emailId + '-saved';
+            clone.querySelector('.btn-success').remove();
+            clone.querySelector('.btn-info').remove();
+            savedForLaterList.appendChild(clone);
+            emailElement.style.display = 'none';
+            savedButtonContainer.style.display = 'block';
+        }
+
+        function toggleUnread() {
+            const button = document.getElementById('toggleUnread');
+            const emailItems = document.querySelectorAll('.email-item');
+            if (button.textContent === 'Show Unread Only') {
+                emailItems.forEach(item => {
+                    if (!item.classList.contains('unread')) {
+                        item.style.display = 'none';
+                    } else {
+                        item.style.display = 'block';
+                    }
+                });
+                button.textContent = 'Show All';
+            } else {
+                emailItems.forEach(item => {
+                    item.style.display = 'block';
+                });
+                button.textContent = 'Show Unread Only';
+            }
+        }
+
+        function toggleSavedForLater() {
+            const savedList = document.getElementById('savedForLaterList');
+            const button = document.getElementById('showSavedForLater');
+            if (savedList.style.display === 'none') {
+                savedList.style.display = 'block';
+                button.textContent = 'Hide Saved for Later';
+            } else {
+                savedList.style.display = 'none';
+                button.textContent = 'Show Saved for Later';
+            }
+        }
+
+        function updateStatusSummary() {
+            const unreadCount = document.querySelectorAll('.email-item.unread').length;
+            document.getElementById('statusSummary').textContent = `${unreadCount} of 15 emails are unread.`;
+        }
+
+        function sortEmails() {
+            const emailList = document.getElementById('emailList');
+            const emails = Array.from(emailList.children);
+            const sortOption = document.getElementById('sortOptions').value;
+
+            emails.sort((a, b) => {
+                switch (sortOption) {
+                    case 'time':
+                        return Math.random() - 0.5; // Arbitrary sorting for now
+                    case 'urgency':
+                        return Math.random() - 0.5; // Arbitrary sorting for now
+                    case 'latest':
+                        return Math.random() - 0.5; // Arbitrary sorting for now
+                    case 'oldest':
+                        return Math.random() - 0.5; // Arbitrary sorting for now
+                    default:
+                        return 0;
+                }
+            });
+
+            // Append sorted emails back to the list
+            emails.forEach(email => emailList.appendChild(email));
+        }
+    </script>
+</body>
+</html>

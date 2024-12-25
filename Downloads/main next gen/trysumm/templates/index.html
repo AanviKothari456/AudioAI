@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Categorizer, Summarizer, Reply Generator & TTS</title>
+    <script>
+        function categorizeEmails() {
+            const email1 = document.getElementById('email1').value;
+            const email2 = document.getElementById('email2').value;
+            const email3 = document.getElementById('email3').value;
+            const email4 = document.getElementById('email4').value;
+
+            fetch('/categorize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `email1=${encodeURIComponent(email1)}&email2=${encodeURIComponent(email2)}&email3=${encodeURIComponent(email3)}&email4=${encodeURIComponent(email4)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('shopping').innerText = data.shopping.join('\n\n') || 'No emails found';
+                document.getElementById('banking').innerText = data.banking.join('\n\n') || 'No emails found';
+                document.getElementById('interviews').innerText = data.interviews.join('\n\n') || 'No emails found';
+                document.getElementById('news').innerText = data.news.join('\n\n') || 'No emails found';
+            });
+        }
+
+        function summarizeEmail() {
+            const emailText = document.getElementById('emailText').value;
+            fetch('/summarize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `emailText=${encodeURIComponent(emailText)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('summaryOutput').innerText = data.summary;
+            });
+        }
+
+        function generateReply() {
+            const emailText = document.getElementById('emailText').value;
+            fetch('/generate_reply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `emailText=${encodeURIComponent(emailText)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('replyOutput').innerText = data.reply;
+            });
+        }
+
+        function generateTTS() {
+            const emailText = document.getElementById('emailText').value;
+            fetch('/text_to_speech', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `emailText=${encodeURIComponent(emailText)}`
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error('Error generating TTS audio.');
+                }
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'speech.mp3';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Email Categorizer, Summarizer, Reply Generator & TTS</h1>
+    <textarea id="email1" rows="5" cols="50" placeholder="Enter email 1 here"></textarea><br>
+    <textarea id="email2" rows="5" cols="50" placeholder="Enter email 2 here"></textarea><br>
+    <textarea id="email3" rows="5" cols="50" placeholder="Enter email 3 here"></textarea><br>
+    <textarea id="email4" rows="5" cols="50" placeholder="Enter email 4 here"></textarea><br>
+    <button onclick="categorizeEmails()">Categorize Emails</button>
+    <h2>Categories:</h2>
+    <h3>Shopping:</h3>
+    <p id="shopping"></p>
+    <h3>Banking:</h3>
+    <p id="banking"></p>
+    <h3>Interviews:</h3>
+    <p id="interviews"></p>
+    <h3>News:</h3>
+    <p id="news"></p>
+
+    <h1>Email Summarizer, Reply Generator & TTS</h1>
+    <textarea id="emailText" rows="10" cols="50" placeholder="Paste your email here"></textarea><br>
+    <button onclick="summarizeEmail()">Summarize Email</button>
+    <button onclick="generateReply()">Generate Reply</button>
+    <button onclick="generateTTS()">Generate Text to Speech</button>
+    <h2>Summary:</h2>
+    <p id="summaryOutput"></p>
+    <h2>Reply:</h2>
+    <p id="replyOutput"></p>
+</body>
+</html>

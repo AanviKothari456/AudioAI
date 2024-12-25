@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Scheduler</title>
+    <script>
+        function scheduleMeeting() {
+            const emailText = document.getElementById('emailText').value;
+            fetch('/schedule_meeting', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `emailText=${encodeURIComponent(emailText)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultContainer = document.getElementById('scheduleResult');
+                const myScheduleContainer = document.getElementById('mySchedule');
+                const sabrinaScheduleContainer = document.getElementById('sabrinaSchedule');
+
+                if (data.meeting_needed) {
+                    myScheduleContainer.innerText = `My Schedule:\n${data.my_schedule}`;
+                    sabrinaScheduleContainer.innerText = `Sabrina's Schedule:\n${data.sabrina_schedule}`;
+                    if (Array.isArray(data.common_slots)) {
+                        resultContainer.innerText = `Common free slots: ${data.common_slots.join(', ')}`;
+                    } else {
+                        resultContainer.innerText = data.common_slots;
+                    }
+                } else {
+                    resultContainer.innerText = data.message;
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Email Scheduler</h1>
+    <textarea id="emailText" rows="10" cols="50" placeholder="Paste your email here"></textarea><br>
+    <button onclick="scheduleMeeting()">Check for Meeting Schedule</button>
+    <h2>Result:</h2>
+    <p id="scheduleResult"></p>
+    <h2>My Schedule:</h2>
+    <pre id="mySchedule"></pre>
+    <h2>Sabrina's Schedule:</h2>
+    <pre id="sabrinaSchedule"></pre>
+</body>
+</html>

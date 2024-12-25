@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Categorizer, Summarizer, Reply Generator & TTS</title>
+    <script>
+        function categorizeEmails() {
+            const email1 = document.getElementById('email1').value;
+            const email2 = document.getElementById('email2').value;
+            const email3 = document.getElementById('email3').value;
+            const email4 = document.getElementById('email4').value;
+
+            fetch('/categorize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `email1=${encodeURIComponent(email1)}&email2=${encodeURIComponent(email2)}&email3=${encodeURIComponent(email3)}&email4=${encodeURIComponent(email4)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                const categoriesContainer = document.getElementById('categories');
+                categoriesContainer.innerHTML = ''; // Clear previous results
+
+                for (const [category, emails] of Object.entries(data)) {
+                    const categoryTitle = document.createElement('h3');
+                    categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+
+                    const emailList = document.createElement('ul');
+                    emails.forEach(email => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = email;
+                        emailList.appendChild(listItem);
+                    });
+
+                    categoriesContainer.appendChild(categoryTitle);
+                    categoriesContainer.appendChild(emailList);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error.message);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Email Categorizer, Summarizer, Reply Generator & TTS</h1>
+    <textarea id="email1" rows="5" cols="50" placeholder="Enter email 1 here"></textarea><br>
+    <textarea id="email2" rows="5" cols="50" placeholder="Enter email 2 here"></textarea><br>
+    <textarea id="email3" rows="5" cols="50" placeholder="Enter email 3 here"></textarea><br>
+    <textarea id="email4" rows="5" cols="50" placeholder="Enter email 4 here"></textarea><br>
+    <button onclick="categorizeEmails()">Categorize Emails</button>
+    <h2>Categories:</h2>
+    <div id="categories"></div>
+</body>
+</html>

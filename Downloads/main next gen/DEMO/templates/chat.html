@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .message-list {
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+
+        .message-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .message-header strong {
+            color: #007bff;
+        }
+
+        .message-timestamp {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .message-content {
+            font-size: 1rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Sammy</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('chat') }}">Inbox</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('categories') }}">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('priority') }}">Priority</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('calendar') }}">Calendar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <a href="/logout" class="btn btn-secondary mt-3" style="position: absolute; top: 45px; right: 20px;">Logout</a>
+    <div class="container">
+        <h2 class="mt-5">Welcome, Aanvi</h2>
+
+        <!-- Form to Send Messages -->
+        <form method="post" class="mt-4" id="message-form">
+            <div class="form-group">
+                <label>Recipient:</label>
+                <input type="text" name="recipient" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Subject:</label>
+                <input type="text" name="subject" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Message:</label>
+                <textarea name="message" class="form-control" rows="4" required></textarea>
+            </div>
+            <button type="button" class="btn btn-success" onclick="sendMessage()">Send</button>
+        </form>
+
+        <!-- Chat History Section -->
+        <h3 class="mt-5">Chat History</h3>
+        <div id="accordion">
+            <!-- Conversations will be dynamically added here -->
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Placeholder for user conversations (this would be replaced with a real API call)
+        let userConversations = {};
+
+        document.addEventListener("DOMContentLoaded", function() {
+            loadConversations();
+        });
+
+        function loadConversations() {
+            // Fetch conversations from the server (replace this with an actual API call)
+            // Example structure: { "contact1": [{ subject: "Subject 1", messages: [{ sender: "User", content: "Message content" }] }] }
+            userConversations = {
+                "Client": [
+                    {
+                        subject: "Bought Ferro Molly",
+                        messages: [
+                            { sender: "SK", content: "I bought 4 tons of FeMo today from jspl @55/kg. Looking for shipment EOD", timestamp: "Fri, Nov 8, 6:54 PM" },
+                            { sender: "AK", content: "okay noted, contacting Shipment Agency right away. since EOD expected: extra surcahrge of 20/ton.", timestamp: "Fri, Nov 8, 7:00 PM" }
+                        ]
+                    },
+                    {
+                        subject: "Tata Invoice",
+                        messages: [
+                            { sender: "SK", content: "I have emailed Tata the invoice for bismuth drums", timestamp: "Sat, Nov 9, 10:00 AM" },
+                            { sender: "AK", content: "ok noted thanks", timestamp: "Sat, Nov 9, 10:15 AM" }
+                        ]
+                    }
+                ]
+            };
+
+            // Populate the conversations in the UI
+            const accordion = document.getElementById('accordion');
+            accordion.innerHTML = '';
+            Object.keys(userConversations).forEach((contact, index) => {
+                const contactCard = document.createElement('div');
+                contactCard.classList.add('card', 'mt-4');
+
+                const contactHeader = document.createElement('div');
+                contactHeader.classList.add('card-header');
+                contactHeader.id = `heading-${index}`;
+
+                const contactButton = document.createElement('button');
+                contactButton.classList.add('btn', 'btn-link');
+                contactButton.setAttribute('data-toggle', 'collapse');
+                contactButton.setAttribute('data-target', `#collapse-${index}`);
+                contactButton.setAttribute('aria-expanded', 'false');
+                contactButton.setAttribute('aria-controls', `collapse-${index}`);
+                contactButton.innerText = `Conversation with ${contact}`;
+                
+
+                contactHeader.appendChild(contactButton);
+                contactCard.appendChild(contactHeader);
+
+                const contactCollapse = document.createElement('div');
+                contactCollapse.id = `collapse-${index}`;
+                contactCollapse.classList.add('collapse');
+                contactCollapse.setAttribute('aria-labelledby', `heading-${index}`);
+                contactCollapse.setAttribute('data-parent', '#accordion');
+
+                const cardBody = document.createElement('div');
+                cardBody.classList.add('card-body');
+
+                userConversations[contact].forEach((thread, threadIndex) => {
+                    const threadCard = document.createElement('div');
+                    threadCard.classList.add('card', 'mt-3');
+
+                    const threadHeader = document.createElement('div');
+                    threadHeader.classList.add('card-header');
+                    threadHeader.id = `thread-heading-${index}-${threadIndex}`;
+
+                    const threadButton = document.createElement('button');
+                    threadButton.classList.add('btn', 'btn-link');
+                    threadButton.setAttribute('data-toggle', 'collapse');
+                    threadButton.setAttribute('data-target', `#thread-collapse-${index}-${threadIndex}`);
+                    threadButton.setAttribute('aria-expanded', 'false');
+                    threadButton.setAttribute('aria-controls', `thread-collapse-${index}-${threadIndex}`);
+                    threadButton.innerText = `Thread: ${thread.subject || "No Subject"}`;
+
+                    threadHeader.appendChild(threadButton);
+                    threadCard.appendChild(threadHeader);
+
+                    const threadCollapse = document.createElement('div');
+                    threadCollapse.id = `thread-collapse-${index}-${threadIndex}`;
+                    threadCollapse.classList.add('collapse');
+                    threadCollapse.setAttribute('aria-labelledby', `thread-heading-${index}-${threadIndex}`);
+                    threadCollapse.setAttribute('data-parent', `#collapse-${index}`);
+
+                    const threadBody = document.createElement('div');
+                    threadBody.classList.add('card-body');
+
+                    const messageList = document.createElement('div');
+                    messageList.classList.add('message-list');
+
+                    thread.messages.forEach((msg, msgIndex) => {
+                        const messageItem = document.createElement('div');
+                        messageItem.classList.add('message-item');
+                        messageItem.style.backgroundColor = msgIndex % 2 === 0 ? '#f5f0e1' : '#e4e6eb';
+                        messageItem.style.padding = '20px';
+                        messageItem.style.marginBottom = '20px';
+                        messageItem.style.borderRadius = '15px';
+                        messageItem.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+
+                        const messageHeader = document.createElement('div');
+                        messageHeader.classList.add('message-header');
+
+                        const senderElement = document.createElement('strong');
+                        senderElement.innerText = msg.sender;
+                        messageHeader.appendChild(senderElement);
+
+                        const timestampElement = document.createElement('span');
+                        timestampElement.classList.add('message-timestamp');
+                        timestampElement.innerText = msg.timestamp;
+                        messageHeader.appendChild(timestampElement);
+
+                        const messageContent = document.createElement('div');
+                        messageContent.classList.add('message-content');
+                        messageContent.innerText = msg.content;
+
+                        messageItem.appendChild(messageHeader);
+                        messageItem.appendChild(messageContent);
+                        messageList.appendChild(messageItem);
+                    });
+
+                    threadBody.appendChild(messageList);
+
+                    // Tabs for Actions: Summarize, Reply, Links, Calendar, Schedule
+                    const actionsTabs = document.createElement('ul');
+                    actionsTabs.classList.add('nav', 'nav-tabs', 'mt-4');
+                    actionsTabs.id = `myTab-${contact}-${threadIndex}`;
+                    actionsTabs.role = 'tablist';
+
+                    const actions = [
+                        { id: 'summary', label: 'Summarize Email' },
+                        { id: 'reply', label: 'Generate Reply' },
+                        { id: 'links', label: 'Extract Links' },
+                        { id: 'calendar', label: 'Calendar' },
+                        { id: 'schedule', label: 'Schedule' }
+                    ];
+
+                    actions.forEach(action => {
+                        const actionItem = document.createElement('li');
+                        actionItem.classList.add('nav-item');
+
+                        const actionLink = document.createElement('a');
+                        actionLink.classList.add('nav-link');
+                        if (action.id === 'summary') {
+                            actionLink.classList.add('active');
+                        }
+                        actionLink.id = `${action.id}-tab-${contact}-${threadIndex}`;
+                        actionLink.setAttribute('data-toggle', 'tab');
+                        actionLink.href = `#${action.id}-${contact}-${threadIndex}`;
+                        actionLink.role = 'tab';
+                        actionLink.innerText = action.label;
+
+                        actionItem.appendChild(actionLink);
+                        actionsTabs.appendChild(actionItem);
+                    });
+
+                    threadBody.appendChild(actionsTabs);
+
+                    threadCollapse.appendChild(threadBody);
+                    threadCard.appendChild(threadCollapse);
+                    cardBody.appendChild(threadCard);
+                });
+
+                contactCollapse.appendChild(cardBody);
+                contactCard.appendChild(contactCollapse);
+                accordion.appendChild(contactCard);
+            });
+        }
+
+        function sendMessage() {
+            const form = document.getElementById('message-form');
+            const formData = new FormData(form);
+            const recipient = formData.get('recipient');
+            const subject = formData.get('subject');
+            const message = formData.get('message');
+
+            if (!recipient || !message) {
+                alert('Recipient and message are required.');
+                return;
+            }
+
+            // Add message to the conversation
+            if (!userConversations[recipient]) {
+                userConversations[recipient] = [];
+            }
+
+            let thread = userConversations[recipient].find(t => t.subject === subject);
+            if (!thread) {
+                thread = { subject: subject || "No Subject", messages: [] };
+                userConversations[recipient].push(thread);
+            }
+
+            thread.messages.push({ sender: 'User', content: message, timestamp: new Date().toLocaleString() });
+
+            // Reload conversations
+            loadConversations();
+        }
+
+        function summarizeConversation(event, contact) {
+            event.preventDefault();
+            fetch('/summarize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ contact: contact })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('summary-content-' + contact + '-0').innerText = 'Summary: ' + data.summary;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Sammi</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .email-card,
+        .conversation-card,
+        .calendar-card,
+        .about-card,
+        .action-item-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .priority-badge {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .action-btn {
+            background-color: #28a745;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .action-btn:hover {
+            background-color: #218838;
+        }
+
+        .button-group {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .reply,
+        .schedule,
+        .summary,
+        .links,
+        .documents {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border-radius: 10px;
+            border: 1px solid #d4edda;
+        }
+
+        .tab-content {
+            margin-top: 20px;
+        }
+
+        .chat-bubble {
+            position: relative;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f1f1f1;
+            border-radius: 15px;
+            overflow-wrap: break-word;
+        }
+
+        .chat-bubble::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -10px;
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-right-color: #f1f1f1;
+            border-left: 0;
+            margin-top: -10px;
+        }
+
+        .chat-bubble.user {
+            background-color: #d4edda;
+        }
+
+        .chat-bubble.user::after {
+            left: auto;
+            right: -10px;
+            border-right: 0;
+            border-left-color: #d4edda;
+        }
+
+        .calendar-card {
+            background-color: #f9e79f;
+            border-left: 5px solid #f1c40f;
+        }
+
+        .calendar-card.meeting-2 {
+            background-color: #aed6f1;
+            border-left: 5px solid #5dade2;
+        }
+
+        .calendar-card.meeting-3 {
+            background-color: #f5b7b1;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .about-card h2 {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .about-card p {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .about-card {
+            background-color: #eaf2f8;
+            padding: 30px;
+            border-left: 8px solid #2980b9;
+        }
+
+        .action-item-card {
+            border-left: 8px solid #ff5733;
+            background-color: #fef6e4;
+            color: #333;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            overflow-wrap: break-word;
+        }
+
+        .action-item-card h4 {
+            font-weight: bold;
+            color: #ff5733;
+        }
+
+        .action-item-card p {
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .email-card,
+            .conversation-card,
+            .calendar-card,
+            .about-card,
+            .action-item-card {
+                padding: 15px;
+            }
+
+            .action-btn {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+
+            .chat-bubble {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" id="emails-tab" href="#emails" data-toggle="tab">Emails</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="conversations-tab" href="#conversations" data-toggle="tab">Conversations</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="calendar-tab" href="#calendar" data-toggle="tab">Calendar</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="actionable-tab" href="#actionable" data-toggle="tab">Actionable Items</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" id="about-tab" href="#about" data-toggle="tab">About Me</a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Emails Tab -->
+            <div class="tab-pane fade" id="emails">
+                <h1 class="mt-4 mb-4">Unread Emails (3)</h1>
+
+                <!-- Example email cards -->
+                <div class="email-card" id="email-1">
+                    <p><span class="priority-badge">Priority: 1</span></p>
+                    <h4>From: <span style="font-size: 0.8em;">aditi.patel@company.com</span></h4>
+                    <p><strong>Subject:</strong> Application Status Update</p>
+                    <p><strong>Summary:</strong> Your application is under review. Expect feedback by the end of the month.</p>
+                    <div class="button-group">
+                        <button class="action-btn" onclick="generateReply('1')">Generate Reply</button>
+                        <button class="action-btn" onclick="scheduleMeeting('Aditi Patel', '10:00 AM', '1')">Auto Schedule Meeting</button>
+                        <button class="action-btn" onclick="generateListen('1')">Listen to Entire Email</button>
+                    </div>
+                    <div class="reply" id="reply-1" style="display:none;"></div>
+                    <div class="schedule" id="schedule-1" style="display:none;"></div>
+                </div>
+
+                <div class="email-card" id="email-2">
+                    <p><span class="priority-badge">Priority: 2</span></p>
+                    <h4>From: <span style="font-size: 0.8em;">professor.anand@berkeley.edu</span></h4>
+                    <p><strong>Subject:</strong> Assignment Deadline Reminder</p>
+                    <p><strong>Summary:</strong> Reminder: Assignment due by Friday. Please ensure all work is submitted on time.</p>
+                    <div class="button-group">
+                        <button class="action-btn" onclick="generateReply('2')">Generate Reply</button>
+                        <button class="action-btn" onclick="scheduleMeeting('Professor Anand', '2:00 PM', '2')">Auto Schedule Meeting</button>
+                        <button class="action-btn" onclick="generateListen('2')">Listen to Entire Email</button>
+                    </div>
+                    <div class="reply" id="reply-2" style="display:none;"></div>
+                    <div class="schedule" id="schedule-2" style="display:none;"></div>
+                </div>
+
+                <div class="email-card" id="email-3">
+                    <p><span class="priority-badge">Priority: 3</span></p>
+                    <h4>From: <span style="font-size: 0.8em;">jessica.jones@clientservices.com</span></h4>
+                    <p><strong>Subject:</strong> Client Order Status</p>
+                    <p><strong>Summary:</strong> Your order #4567 has been shipped. Delivery expected by Thursday.</p>
+                    <div class="button-group">
+                        <button class="action-btn" onclick="generateReply('3')">Generate Reply</button>
+                        <button class="action-btn" onclick="scheduleMeeting('Jessica Jones', '3:00 PM', '3')">Auto Schedule Meeting</button>
+                        <button class="action-btn" onclick="generateListen('3')">Listen to Entire Email</button>
+                    </div>
+                    <div class="reply" id="reply-3" style="display:none;"></div>
+                    <div class="schedule" id="schedule-3" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Conversations Tab -->
+            <div class="tab-pane fade" id="conversations">
+                <h1 class="mt-4 mb-4">Conversations Demo</h1>
+
+                <div class="conversation-card">
+                    <h4>Conversation between Emily and Rajesh</h4>
+                    <div class="chat-bubble">
+                        <strong>Emily:</strong> Hey Rajesh, did you check the latest update on the project?
+                    </div>
+                    <div class="chat-bubble user">
+                        <strong>Rajesh:</strong> Yes, I saw it. It looks great, but we need to make some adjustments.
+                    </div>
+                    <div class="chat-bubble">
+                        <strong>Emily:</strong> Absolutely! Let’s schedule a meeting to discuss it further.
+                    </div>
+                    <div class="button-group">
+                        <button class="action-btn" onclick="summarizeConversation('1')">Summarize Conversation</button>
+                        <button class="action-btn" onclick="showLinks('1')">Links</button>
+                        <button class="action-btn" onclick="showDocuments('1')">Documents</button>
+                    </div>
+                    <div class="summary" id="summary-1" style="display:none;">
+                        <strong>Conversation Summary:</strong>
+                        <p>Discussion about project status and need for adjustments.</p>
+                    </div>
+                    <div class="links" id="links-1" style="display:none;">
+                        <strong>Links:</strong>
+                        <ul>
+                            <li><a href="https://projecttools.com">https://projecttools.com</a></li>
+                            <li><a href="https://teammeetings.com/agenda">https://teammeetings.com/agenda</a></li>
+                        </ul>
+                    </div>
+                    <div class="documents" id="documents-1" style="display:none;">
+                        <strong>Documents:</strong>
+                        <ul>
+                            <li>Project_Update_Draft.docx</li>
+                            <li>Adjustment_Plan.pdf</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="conversation-card">
+                    <h4>Conversation between John and Priya</h4>
+                    <div class="chat-bubble">
+                        <strong>John:</strong> Hi Priya, I need help with the analysis report. Can we discuss it?
+                    </div>
+                    <div class="chat-bubble user">
+                        <strong>Priya:</strong> Sure, John. Let's connect at 2 PM today. I can help you out then.
+                    </div>
+                    <div class="button-group">
+                        <button class="action-btn" onclick="summarizeConversation('2')">Summarize Conversation</button>
+                        <button class="action-btn" onclick="showLinks('2')">Links</button>
+                        <button class="action-btn" onclick="showDocuments('2')">Documents</button>
+                    </div>
+                    <div class="summary" id="summary-2" style="display:none;">
+                        <strong>Conversation Summary:</strong>
+                        <p>Discussion about analysis report and scheduled help session at 2 PM.</p>
+                    </div>
+                    <div class="links" id="links-2" style="display:none;">
+                        <strong>Links:</strong>
+                        <ul>
+                            <li><a href="https://dataanalysis.com/report">https://dataanalysis.com/report</a></li>
+                            <li><a href="https://calendly.com/priyahelp">https://calendly.com/priyahelp</a></li>
+                        </ul>
+                    </div>
+                    <div class="documents" id="documents-2" style="display:none;">
+                        <strong>Documents:</strong>
+                        <ul>
+                            <li>Analysis_Report_Draft.pdf</li>
+                            <li>Meeting_Notes.docx</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Tab -->
+            <div class="tab-pane fade" id="calendar">
+                <h1 class="mt-4 mb-4">Today's Meetings</h1>
+
+                <div class="calendar-card">
+                    <h4>Meeting 1: Project Status Review</h4>
+                    <p><strong>Time:</strong> 10:00 AM - 11:00 AM</p>
+                    <p><strong>Participants:</strong> Aditi Patel, John Smith, Emily Davis</p>
+                </div>
+
+                <div class="calendar-card meeting-2">
+                    <h4>Meeting 2: Marketing Strategy Discussion</h4>
+                    <p><strong>Time:</strong> 1:00 PM - 2:00 PM</p>
+                    <p><strong>Participants:</strong> Rajesh Verma, Jessica Johnson, Priya Kapoor</p>
+                </div>
+
+                <div class="calendar-card meeting-3">
+                    <h4>Meeting 3: Budget Planning</h4>
+                    <p><strong>Time:</strong> 3:00 PM - 4:00 PM</p>
+                    <p><strong>Participants:</strong> Michael Brown, Saanvi Gupta, Robert White</p>
+                </div>
+            </div>
+
+            <!-- Actionable Items Tab -->
+            <div class="tab-pane fade" id="actionable">
+                <h1 class="mt-4 mb-4">Actionable Items for Today</h1>
+
+                <div class="action-item-card">
+                    <h4>Reminder to ping John about analysis report today</h4>
+                    <p>Make sure to check in with John regarding the status of the analysis report and provide any needed guidance.</p>
+                </div>
+
+                <div class="action-item-card">
+                    <h4>Prepare for Google interview tomorrow</h4>
+                    <p>Review data analysis concepts, algorithms, and practice coding problems. Remember to brush up on key topics for the interview.</p>
+                </div>
+
+                <div class="action-item-card">
+                    <h4>Submit lab report for Physics 101</h4>
+                    <p>Don't forget to submit your Physics 101 lab report by 5 PM today. Make sure all sections are complete and reviewed.</p>
+                </div>
+            </div>
+
+            <!-- About Me Tab -->
+            <div class="tab-pane fade show active" id="about">
+                <div class="about-card">
+                    <h2>About Sammi</h2>
+                    <p>Sammi is your intelligent assistant designed to help you manage emails, conversations, and schedules with ease. Our vision is to enhance productivity and streamline communication by automating repetitive tasks such as generating replies, summarizing conversations, and managing meetings. Sammi integrates seamlessly into your professional workflow, allowing you to focus on what truly matters.</p>
+                    <h4>Tabs Overview:</h4>
+                    <p><strong>Emails:</strong> Manage and respond to your emails with ease. Sammi provides autogenerated replies and scheduling options.</p>
+                    <p><strong>Conversations:</strong> View ongoing discussions and get quick summaries, related documents, and useful links.</p>
+                    <p><strong>Calendar:</strong> Stay updated on your meetings for today and manage your schedule efficiently.</p>
+                    <p><strong>Actionable Items:</strong> Keep track of important tasks to complete today. Sammi makes sure you stay on top of everything.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to generate a reply to an email
+        function generateReply(emailId) {
+            const replyBox = document.getElementById(`reply-${emailId}`);
+            let replyContent = '';
+
+            if (emailId === '1') {
+                replyContent = `<strong>Generated Reply:</strong><p>Thank you for the update, Aditi. I look forward to receiving further feedback.</p>`;
+            } else if (emailId === '2') {
+                replyContent = `<strong>Generated Reply:</strong><p>Thank you, Professor Anand, for the reminder. I will ensure my assignment is submitted on time.</p>`;
+            } else if (emailId === '3') {
+                replyContent = `<strong>Generated Reply:</strong><p>Thank you, Jessica, for the update. I look forward to receiving the order.</p>`;
+            }
+
+            replyBox.innerHTML = replyContent;
+            replyBox.style.display = 'block';
+        }
+
+        function generateListen(emailId) {
+    const scheduleBox = document.getElementById(`schedule-${emailId}`);
+    let listenContent = `<strong>Currently in development:</strong><p> You would have a voice assistant read your email to you!</p>`;
+
+    scheduleBox.innerHTML = listenContent;
+    scheduleBox.style.display = 'block';
+}
+
+
+        // Function to auto schedule a meeting
+        function scheduleMeeting(person, time, emailId) {
+            const scheduleBox = document.getElementById(`schedule-${emailId}`);
+            scheduleBox.innerHTML = `<strong>Meeting Scheduled:</strong><p>Meeting scheduled with ${person} at ${time}.</p>`;
+            scheduleBox.style.display = 'block';
+        }
+
+        // Function to summarize a conversation
+        function summarizeConversation(convoId) {
+            const summaryBox = document.getElementById(`summary-${convoId}`);
+            summaryBox.style.display = 'block';
+        }
+
+        // Function to show links from a conversation
+        function showLinks(convoId) {
+            const linksBox = document.getElementById(`links-${convoId}`);
+            linksBox.style.display = 'block';
+        }
+
+        // Function to show documents from a conversation
+        function showDocuments(convoId) {
+            const documentsBox = document.getElementById(`documents-${convoId}`);
+            documentsBox.style.display = 'block';
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

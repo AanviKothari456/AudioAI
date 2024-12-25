@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            padding: 20px;
+        }
+        #calendar {
+            margin-top: 30px;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .event-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .event-title {
+            font-weight: bold;
+            color: #ff5722;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Next-Gen Calendar</h1>
+        <div class="text-center mb-3">
+            <button class="btn btn-primary" id="addEventBtn">Add Event</button>
+            <button class="btn btn-success" id="autoScheduleBtn">Auto Schedule</button>
+            <input type="text" id="searchEvent" placeholder="Search Event" class="ml-3">
+        </div>
+        <div id="calendar"></div>
+    </div>
+
+    <!-- Modal to add event -->
+    <div class="modal" id="addEventModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Event</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="eventName">Event Name</label>
+                        <input type="text" class="form-control" id="eventName">
+                    </div>
+                    <div class="form-group">
+                        <label for="eventTime">Time</label>
+                        <input type="text" class="form-control" id="eventTime" placeholder="e.g. 10:00 AM - 11:00 AM">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveEventBtn">Save Event</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to auto schedule event -->
+    <div class="modal" id="autoScheduleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schedule with AI</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="personName">Name of Person</label>
+                        <input type="text" class="form-control" id="personName" placeholder="e.g. Tom">
+                    </div>
+                    <div class="form-group">
+                        <label for="scheduleDate">Date</label>
+                        <select class="form-control" id="scheduleDate">
+                            <option value="today">Today</option>
+                            <option value="tomorrow">Tomorrow</option>
+                            <option value="day_after">Day After Tomorrow</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="scheduleEventBtn">Schedule</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize some default events
+            const events = [
+                { title: 'Meeting with JSPL', time: '10:00 AM - 11:00 AM' },
+                { title: 'Prime Day Sale - Amazon', time: 'All Day Event' },
+                { title: 'Optiver Infosession', time: '14:00 PM - 15:00 PM' }
+            ];
+
+            // Render Events
+            function renderEvents(filter = '') {
+                $('#calendar').empty();
+                events.filter(event => event.title.toLowerCase().includes(filter.toLowerCase())).forEach((event, index) => {
+                    const eventHtml = `
+                        <div class="event-item" data-index="${index}">
+                            <div>
+                                <div class="event-title">${event.title}</div>
+                                <div>${event.time}</div>
+                            </div>
+                            <button class="btn btn-danger btn-sm deleteEventBtn">Delete</button>
+                        </div>
+                    `;
+                    $('#calendar').append(eventHtml);
+                });
+            }
+
+            // Show add event modal
+            $('#addEventBtn').click(function() {
+                $('#addEventModal').modal('show');
+            });
+
+            // Save new event
+            $('#saveEventBtn').click(function() {
+                const eventName = $('#eventName').val();
+                const eventTime = $('#eventTime').val();
+
+                if (eventName && eventTime) {
+                    events.push({ title: eventName, time: eventTime });
+                    renderEvents();
+                    $('#addEventModal').modal('hide');
+                } else {
+                    alert('Please enter both event name and time.');
+                }
+            });
+
+            // Delete event
+            $('#calendar').on('click', '.deleteEventBtn', function() {
+                const index = $(this).closest('.event-item').data('index');
+                events.splice(index, 1);
+                renderEvents();
+            });
+
+            // Search event
+            $('#searchEvent').on('input', function() {
+                const filter = $(this).val();
+                renderEvents(filter);
+            });
+
+            // Show auto schedule modal
+            $('#autoScheduleBtn').click(function() {
+                $('#autoScheduleModal').modal('show');
+            });
+
+            // Schedule with AI
+            $('#scheduleEventBtn').click(function() {
+                const personName = $('#personName').val();
+                const scheduleDate = $('#scheduleDate').val();
+
+                if (personName && scheduleDate) {
+                    let eventDate = '';
+                    if (scheduleDate === 'today') {
+                        eventDate = 'Today';
+                    } else if (scheduleDate === 'tomorrow') {
+                        eventDate = 'Tomorrow';
+                    } else {
+                        eventDate = 'Day After Tomorrow';
+                    }
+
+                    const newEvent = { title: `Meeting with ${personName}`, time: `${eventDate} - 6:00PM - 7:00PM` };
+                    events.push(newEvent);
+                    renderEvents();
+                    $('#autoScheduleModal').modal('hide');
+                } else {
+                    alert('Please enter the name and select a date.');
+                }
+            });
+
+            // Initial render
+            renderEvents();
+        });
+    </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

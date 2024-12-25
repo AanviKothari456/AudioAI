@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech Example</title>
+</head>
+<body>
+    <h1>Text-to-Speech Demo</h1>
+    <p id="text">Hello! Welcome to the Text-to-Speech demo. This is an example of how you can make your app read text aloud.</p>
+    <button id="speakButton">Click to Listen</button>
+    <button id="stopButton">Stop</button>
+
+    <script>
+        // Function to speak text
+        function speakText() {
+            // Get the text from the page
+            const text = document.getElementById('text').innerText;
+
+            // Create a new SpeechSynthesisUtterance instance
+            const utterance = new SpeechSynthesisUtterance(text);
+
+            // Set voice options (optional)
+            utterance.lang = 'en-US'; // Language
+            utterance.pitch = 1; // Pitch (0.5 - 2)
+            utterance.rate = 1; // Speed (0.1 - 10)
+            utterance.volume = 1; // Volume (0 - 1)
+
+            // Speak the text
+            speechSynthesis.speak(utterance);
+
+            // Event listener to stop speech when finished
+            utterance.onend = () => {
+                console.log('Speech has finished.');
+            };
+        }
+
+        // Function to stop speech
+        function stopSpeech() {
+            speechSynthesis.cancel();
+        }
+
+        // Add event listeners to buttons
+        document.getElementById('speakButton').addEventListener('click', speakText);
+        document.getElementById('stopButton').addEventListener('click', stopSpeech);
+    </script>
+</body>
+</html>

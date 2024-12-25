@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Sammy</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .register-container {
+            max-width: 500px;
+            margin: 60px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .app-name {
+            font-family: 'Arial', sans-serif;
+            font-size: 2.5rem;
+            color: #007bff;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .dropdown-container {
+            width: 150px; /* Set the dropdown width */
+            margin-bottom: 10px; /* Add some space between dropdowns */
+        }
+
+        .register-container button {
+            width: 100%;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <!-- App Name Section -->
+        <div class="app-name">
+            Sammy
+        </div>
+
+        <!-- Registration Form -->
+        <form method="post">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+
+            <!-- Calendar Section -->
+            <div class="form-group">
+                <label>Calendar for Today:</label>
+                <div class="dropdown-container">
+                    10-11:
+                    <select name="time_10_11" class="form-control">
+                        <option value="Free">Free</option>
+                        <option value="Busy">Busy</option>
+                    </select>
+                </div>
+                <div class="dropdown-container">
+                    11-12:
+                    <select name="time_11_12" class="form-control">
+                        <option value="Free">Free</option>
+                        <option value="Busy">Busy</option>
+                    </select>
+                </div>
+                <div class="dropdown-container">
+                    12-1:
+                    <select name="time_12_1" class="form-control">
+                        <option value="Free">Free</option>
+                        <option value="Busy">Busy</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+
+        <div class="footer-text">
+            Already have an account? <a href="/">Login here</a>
+        </div>
+    </div>
+</body>
+</html>

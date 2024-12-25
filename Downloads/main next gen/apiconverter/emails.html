@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Latest Emails</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+      body {
+        background-color: #f8f9fa;
+        padding: 20px;
+      }
+      .email-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+      }
+      .priority-badge {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
+      .generate-reply-btn {
+        background-color: #28a745;
+        color: #ffffff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .generate-reply-btn:hover {
+        background-color: #218838;
+      }
+      .reply {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #e9f7ef;
+        border-radius: 10px;
+        border: 1px solid #d4edda;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mb-4">Latest Emails (Prioritized)</h1>
+      {% for email in sorted_emails %}
+        <div class="email-card" id="email-{{ email.id }}">
+          <p><span class="priority-badge">Priority: {{ email.priority }}</span></p>
+          <h4>From: {{ email.sender }}</h4>
+          <p><strong>Subject:</strong> {{ email.subject }}</p>
+          <p><strong>Summary:</strong> {{ email.summary }}</p>
+          <form action="/generate_reply" method="post" onsubmit="generateReply(event, '{{ email.id }}')">
+            <input type="hidden" name="email_id" value="{{ email.id }}">
+            <button type="submit" class="generate-reply-btn">Generate Reply</button>
+          </form>
+          <div class="reply" id="reply-{{ email.id }}" style="display:none;"></div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <script>
+      function generateReply(event, emailId) {
+        event.preventDefault();
+        fetch('/generate_reply', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            'email_id': emailId
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.reply) {
+            document.getElementById(`reply-${emailId}`).innerHTML = `<strong>Generated Reply:</strong><p>${data.reply}</p>`;
+            document.getElementById(`reply-${emailId}`).style.display = 'block';
+          } else {
+            alert('Error: ' + data.error);
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      }
+    </script>
+  </body>
+</html>

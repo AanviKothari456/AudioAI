@@ -1,0 +1,85 @@
+/* Calendar Container Styling */
+#calendar-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px; /* Added padding for better spacing */
+    border: 1px solid #ccc; /* Optional border for a clear container boundary */
+    border-radius: 10px;
+    background-color: #f8f9fa; /* Light background to differentiate from other content */
+}
+
+/* FullCalendar General Styles */
+.fc-toolbar-title {
+    font-size: 1.25rem; /* Standardize to a simple readable size */
+    color: #333;        /* Basic, consistent text color */
+    text-align: center; /* Center the title for clarity */
+}
+
+.fc .fc-button {
+    background-color: #007bff; /* Bootstrap primary color for consistency */
+    border: none;
+    color: #fff;
+    border-radius: 4px; /* Rounded corners to match Bootstrap */
+    padding: 5px 10px; /* Consistent padding for all buttons */
+}
+
+.fc .fc-button:hover {
+    background-color: #0056b3; /* Slightly darker shade for hover */
+}
+
+.fc .fc-event {
+    font-size: 1rem;
+    border: 1px solid #ccc; /* Simple border for visual distinction */
+    border-radius: 4px;
+    padding: 4px; /* Padding for better readability */
+    background-color: #007bff; /* Consistent event background color */
+    color: #fff; /* Event text color for better contrast */
+}
+
+.fc .fc-timegrid-slot-label {
+    font-weight: bold;
+    color: #555; /* Neutral color to keep the UI uncluttered */
+    padding-left: 10px; /* Padding for spacing between label and grid */
+}
+
+.fc .fc-col-header-cell-cushion {
+    color: #007bff; /* Consistent primary color for headers */
+    font-weight: bold;
+}
+
+.fc .fc-daygrid-day-number {
+    color: #007bff; /* Keep day numbers in primary color */
+}
+
+.fc .fc-event-title {
+    text-align: center; /* Centered text within events */
+    color: #fff;        /* White color for contrast on colored background */
+    font-weight: bold;  /* Bold event titles for better emphasis */
+}
+
+/* Scroller Adjustments */
+.fc .fc-scroller {
+    overflow: auto !important; /* Allow scrolling if necessary */
+}
+
+/* Schedule Container Styling */
+#schedule-container {
+    margin-top: 15px; /* Increased spacing for better visual distinction */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f8f9fa; /* Light background to separate from the rest of the content */
+}
+
+#schedule-container h5 {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 1.2rem; /* Slightly increased font size for emphasis */
+    color: #333; /* Basic, readable text color */
+}
+
+#schedule-container p {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 10px; /* Space between paragraphs for clarity */
+}
