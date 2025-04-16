@@ -59,3 +59,5 @@ with torch.no_grad():
     test_outputs = model(X_test)
     predictions = torch.argmax(test_outputs, dim=1)
     print(classification_report(y_test, predictions))
+
+torch.save(model.state_dict(), 'model.pth')
